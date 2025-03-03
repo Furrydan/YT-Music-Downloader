@@ -5,16 +5,20 @@ from music_app import MusicApp
 class Downloader_GUI:
     def __init__(self):
         self.download = Downloader()
-        self.music = MusicApp()
+        self.window = Tk()
+        self.music = MusicApp(self.window)
 
     def create_gui(self):
 
-        window = Tk()
-        window.geometry("840x840")
-        window.title("Youtube Music Downloader")
+        self.window.geometry("840x840")
+        self.window.title("Youtube Music Downloader")
 
-        self.music.gui(window=window, downloader=self.download)
+        self.music.heading()
 
-        window.mainloop()
+        self.music.inputs()
+
+        self.music.gui(downloader=self.download)
+
+        self.window.mainloop()
 
 

@@ -2,22 +2,15 @@ from tkinter import *
 from tkinter import filedialog
 
 class MusicApp():
-    def gui(self, window, downloader):
 
-        def get_filepath():
-            filepath_content = filedialog.askdirectory()
-            download_path.config(text=filepath_content)
+    def __init__(self, window):
+        self.status_text = StringVar(window, "Copy and Paste Video URL")
+        self.download_path = StringVar(window)
+        self.link = StringVar(window)
+        self.window = window
 
-        def download_button():
-#            try:
-            downloader.download(url.get(), download_path.cget('text'))
-            url.delete(0,END)
-            text_instructions = "Downloaded File"
-            #except:
-               #text_instructions = "Wrong Link"
-            instructions.config(text=text_instructions)
-
-        heading = Label(window,
+    def heading(self):
+        heading = Label(self.window,
                         text="Youtube Music Downloader",
                         font=('Arial', 40, 'bold'),
                         fg= 'white',
@@ -26,21 +19,22 @@ class MusicApp():
                         pady=30)
         heading.pack()
 
-        instructions = Label(window,
-                             text="Copy and Paste URL",
+    def inputs(self):
+        instructions = Label(self.window,
+                             textvariable=self.status_text,
                              font=('Arial', 20),
                              pady=20,
                              padx=20)
-        
         instructions.pack()
 
-        url = Entry()
+        url = Entry(self.window, textvariable=self.link)
         url.config(font=('Arial', 20),
                 bg='grey',
-                width=45)
+                width=45,
+                cursor="arrow")
         url.pack()
 
-        download_instructions = Label(window,
+        download_instructions = Label(self.window,
                              text="Select Download Location",
                              font=('Arial', 20),
                              pady=20,
@@ -48,20 +42,37 @@ class MusicApp():
         
         download_instructions.pack()
 
-        download_path = Label(window,
-                        text="",
+        download_path = Label(self.window,
+                        textvariable=self.download_path,
                         font=('Arial', 20),
                         bg='grey',
                         width=45)
         download_path.pack()
 
-        search_path = Button(window,
+    def gui(self, downloader):
+
+        def get_filepath():
+            filepath_content = filedialog.askdirectory()
+            self.download_path.set(filepath_content)
+
+        def download_button():
+            try:
+                downloader.download(self.link.get(), self.download_path.get())
+                self.link.set("")
+                text_instructions = "Downloaded File"
+            except:
+               text_instructions = "Wrong Link"
+            self.status_text.set(text_instructions)
+
+       
+
+        search_path = Button(self.window,
                             text="Download location")
         search_path.config( command=get_filepath,
                             font=('Arial', 20, 'bold'))
         search_path.pack()
 
-        download = Button(window, text="Download")
+        download = Button(self.window, text="Download")
         download.config(command=download_button,
                         font=('Arial', 20, 'bold'),
                         bg='white',
