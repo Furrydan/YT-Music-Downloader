@@ -20,7 +20,16 @@ class Downloader():
         audiofile.save()
         img_in.close()   
         location = location.replace('/','\\')
-        os.replace(location + '\\song.m4a', f'{location}\\{title.replace('/', '-')}.m4a')   
+        title = title.replace('/', '-')
+        title = title.replace('\\', '-')
+        title = title.replace('?', '-')
+        title = title.replace(':', '-')
+        title = title.replace('<', '-')
+        title = title.replace('>', '-')
+        title = title.replace('*', '-')
+        title = title.replace('"', '-')
+        title = title.replace('|', '-')
+        os.replace(location + '\\song.m4a', f'{location}\\{title}.m4a')   
         os.remove('thumbnail.png')
 
         
