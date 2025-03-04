@@ -15,6 +15,8 @@ class Downloader_GUI:
 
         self.music.heading()
 
+        self.music.mode()
+
         self.music.inputs()
 
         self.music.gui(downloader=self.download)
