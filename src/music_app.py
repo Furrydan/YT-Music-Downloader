@@ -8,7 +8,7 @@ class MusicApp():
         self.download_path = StringVar(window)
         self.link = StringVar(window)
         self.window = window
-        self.mode_button = BooleanVar(window)
+        self.mode_button = BooleanVar(window, True)
 
     def heading(self):
         heading = Label(self.window,
@@ -22,14 +22,28 @@ class MusicApp():
 
     def mode(self):
 
+        mode_frame = Frame(self.window)
+        mode_frame.pack()
+
         def soloButton():
+            self.mode_button.set(True)
+        def playlistButton():
             self.mode_button.set(False)
 
-        solo_button = Button(self.window,
+        solo_button = Button(mode_frame,
                              text="Solo")
         solo_button.config(command=soloButton,
-                           font=('Arial',20))
-        solo_button.pack()
+                           font=('Arial',20, 'bold'),
+                           width=10)
+        
+        playlist_button = Button(mode_frame,
+                                text="Playlist")
+        playlist_button.config(command=playlistButton,
+                               font=('Arial', 20, 'bold'),
+                               width=10)
+                
+        solo_button.grid(row=0,column=0, padx=15)
+        playlist_button.grid(row=0,column=2,padx=15)
 
     def inputs(self):
         instructions = Label(self.window,
