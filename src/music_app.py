@@ -27,14 +27,21 @@ class MusicApp():
 
         def soloButton():
             self.mode_button.set(True)
+            solo_button.config(bg='black', fg='red')
+            playlist_button.config(bg='white', fg='black')
         def playlistButton():
             self.mode_button.set(False)
+            solo_button.config(bg='white', fg='black')
+            playlist_button.config(bg='black', fg='red')
+
 
         solo_button = Button(mode_frame,
                              text="Solo")
         solo_button.config(command=soloButton,
                            font=('Arial',20, 'bold'),
-                           width=10)
+                           width=10,
+                           bg='black',
+                           fg='red')
         
         playlist_button = Button(mode_frame,
                                 text="Playlist")
@@ -82,13 +89,22 @@ class MusicApp():
             self.download_path.set(filepath_content)
 
         def download_button():
-            try:
-                downloader.download(self.link.get(), self.download_path.get())
-                self.link.set("")
-                text_instructions = "Downloaded File"
-            except:
-               text_instructions = "Wrong Link"
-            self.status_text.set(text_instructions)
+            if self.mode_button.get() == True:
+                try:
+                    downloader.download(self.link.get(), self.download_path.get())
+                    self.link.set("")
+                    text_instructions = "Downloaded File"
+                except:
+                    text_instructions = "Wrong Link"
+                self.status_text.set(text_instructions)
+            else:
+                try:
+                    downloader.download_playlist(self.link.get(), self.download_path.get())
+                    self.link.set("")
+                    text_instructions = "Downloaded File"
+                except:
+                    text_instructions = "Wrong Link"
+                self.status_text.set(text_instructions)
 
        
 

@@ -26,8 +26,9 @@ class Downloader():
 
     def download_playlist(self, link, location):
         playList = Playlist(link)
-        for song in playList:
-            stream = song.song.get_audio_only()
+        for song in playList.videos:
+            print(type(song))
+            stream = song.streams.get_audio_only()
             stream.download(output_path=location, filename='song.m4a')
             url = song.thumbnail_url
             title = song.title
