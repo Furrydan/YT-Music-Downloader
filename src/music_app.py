@@ -91,19 +91,21 @@ class MusicApp():
         def download_button():
             if self.mode_button.get() == True:
                 try:
-                    downloader.download(self.link.get(), self.download_path.get())
+                    downloader.get_details_solo(self.link.get())
+                    downloader.download(self.download_path.get())
                     self.link.set("")
                     text_instructions = "Downloaded File"
                 except:
                     text_instructions = "Wrong Link"
                 self.status_text.set(text_instructions)
             else:
-                try:
-                    downloader.download_playlist(self.link.get(), self.download_path.get())
-                    self.link.set("")
-                    text_instructions = "Downloaded File"
-                except:
-                    text_instructions = "Wrong Link"
+                #try:
+                downloader.get_details_playlist(self.link.get())
+                downloader.download_playlist(self.download_path.get())
+                self.link.set("")
+                text_instructions = "Downloaded File"
+                #except:
+                    #text_instructions = "Wrong Link"
                 self.status_text.set(text_instructions)
 
        

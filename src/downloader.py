@@ -1,45 +1,74 @@
 from pytubefix import YouTube,Playlist
-from aux_func import correct
 import urllib.request
 import music_tag
 import os
 
+def download_song(yt,location, filename):
+        stream = yt.streams.get_audio_only()
+        stream.download(output_path=location, filename=filename)
+
+def get_thumbnail_img(url,filename):
+    urllib.request.urlretrieve(url, f'thumbnails/{filename[:-4]}.png')
+
+def set_attributes(filename, location, title):
+    audiofile = music_tag.load_file(location + f'/{filename}')
+    audiofile['title'] = title
+    with open(f'thumbnails/{filename[:-4]}.png', 'rb') as img_in:
+        audiofile['artwork'] = img_in.read()
+    audiofile.save()
+    os.remove(f'thumbnails/{filename[:-4]}.png')
+    img_in.close()
+
+def correct(title):
+        title = title.replace('/', '-')
+        title = title.replace('\\', '-')
+        title = title.replace('?', '-')
+        title = title.replace(':', '-')
+        title = title.replace('<', '-')
+        title = title.replace('>', '-')
+        title = title.replace('*', '-')
+        title = title.replace('"', '-')
+        title = title.replace('|', '-')
+        title += '.m4a'
+        return title
+
 
 class Downloader():
+    def __init__(self):
+         self.title = ""
+         self.filename = ""
+         self.thumbnail_url = ""
+         self.playlist = {}
+         self.solo_obj = None
+         self.playList_obj = None
 
-    def download(self, link, location):
-        yt = YouTube(link)
-        stream = yt.streams.get_audio_only()
-        stream.download(output_path=location, filename='song.m4a')
-        url = yt.thumbnail_url
-        title = yt.title
-        urllib.request.urlretrieve(url, 'thumbnail.png')
-        audiofile = music_tag.load_file(location + '/song.m4a')
-        audiofile['title'] = title
-        with open('thumbnail.png', 'rb') as img_in:
-            audiofile['artwork'] = img_in.read()
-        audiofile.save()
-        img_in.close()   
-        title = correct(title)
-        os.replace(location + '/song.m4a', f'{location}/{title}.m4a')   
-        os.remove('thumbnail.png')
+    def get_details_solo(self, link):
+        self.solo_obj = YouTube(link)
+        self.title = self.solo_obj.title
+        self.thumbnail_url = self.solo_obj.thumbnail_url
+        self.filename = correct(self.title)
+        get_thumbnail_img(self.thumbnail_url,self.filename)
 
-    def download_playlist(self, link, location):
-        playList = Playlist(link)
-        for song in playList.videos:
-            print(type(song))
-            stream = song.streams.get_audio_only()
-            stream.download(output_path=location, filename='song.m4a')
+    def get_details_playlist(self, link):
+        self.playList_obj = Playlist(link)
+        for song in self.playList_obj.videos:
             url = song.thumbnail_url
-            title = song.title
-            urllib.request.urlretrieve(url, 'thumbnail.png')
-            audiofile = music_tag.load_file(location + '/song.m4a')
-            audiofile['title'] = title
-            with open('thumbnail.png', 'rb') as img_in:
-                audiofile['artwork'] = img_in.read()
-            audiofile.save()
-            img_in.close()   
-            title = correct(title)
-            os.replace(location + '/song.m4a', f'{location}/{title}.m4a')   
-            os.remove('thumbnail.png')
+            filename = correct(song.title)
+            get_thumbnail_img(url, filename)
+            self.playlist[song.title] = filename
+        
+
+    def download(self, location):
+
+        download_song(self.solo_obj, location, self.filename)
+
+        set_attributes(self.filename, location, self.title)
+
+    def download_playlist(self, location):
+        
+        for song in self.playList_obj.videos:
+        
+            download_song(song, location, self.playlist[song.title])
+            
+            set_attributes(self.playlist[song.title], location, song.title)
         
